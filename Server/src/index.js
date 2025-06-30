@@ -1,7 +1,7 @@
 const express = require("express");
 const router = require("./router");
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000 || "https://hotels-b57y.onrender.com";
 
 const app = express();
 
