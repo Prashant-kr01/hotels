@@ -4,7 +4,7 @@ const search = (input) => {
   if (input) {
     try {
       const source = CancelToken.source();
-      const request = axios.get(`/api/search?keyword=${input}`, {
+      const request = axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/search?keyword=${input}`, {
         cancelToken: source.token,
       });
       return {
@@ -45,7 +45,7 @@ const search = (input) => {
 export const searchCities = async (input) => {
   if (!input) return { data: [] };
   try {
-    const response = await axios.get(`/api/search?keyword=${input}`);
+    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/search?keyword=${input}`);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -57,7 +57,7 @@ export const searchCities = async (input) => {
 export const getHotels = async (cityCode, checkInDate, checkOutDate) => {
   try {
     const response = await axios.get(
-      `/api/hotels?cityCode=${cityCode}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`
+      `${import.meta.env.VITE_API_BASE_URL}/api/hotels?cityCode=${cityCode}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`
     );
     const json = response.data;
     // If the backend returns hotel offers in json.data, return as-is
@@ -83,7 +83,7 @@ export const getHotels = async (cityCode, checkInDate, checkOutDate) => {
 // Get offers for a hotel
 export const getOffers = async (hotelId) => {
   try {
-    const response = await axios.get(`/api/offers?hotelId=${hotelId}`);
+    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/offers?hotelId=${hotelId}`);
     const json = response.data;
     if (json && json.data && Array.isArray(json.data.offers)) {
       return json.data.offers;
