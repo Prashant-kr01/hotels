@@ -15,7 +15,47 @@ import {
 import { getHotels } from "./api";
 import Offers from "./Offers";
 const useStyles = makeStyles((theme) => ({
-  // ...
+  hotelList: {
+    marginTop: 24,
+  },
+  hotelListing: {
+    display: "flex",
+    alignItems: "center",
+    gap: 16,
+    padding: 8,
+    background: "#fffbe7",
+    borderRadius: 12,
+    boxShadow: "0 2px 8px rgba(255, 193, 7, 0.15)",
+  },
+  hotelGraphic: {
+    marginRight: 12,
+  },
+  hotelImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    objectFit: "cover",
+    border: "2px solid #43c6ac",
+  },
+  hotelIcon: {
+    fontSize: 60,
+    color: "#43c6ac",
+  },
+  hotelDetails: {
+    flex: 1,
+  },
+  hotelName: {
+    fontWeight: 600,
+    fontSize: 20,
+    color: "#ff9800",
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+  },
+  hotelAddress: {
+    fontSize: 14,
+    color: "#757575",
+  },
 }));
 const Hotels = ({ cityCode, checkInDate, checkOutDate }) => {
   const classes = useStyles();
@@ -92,9 +132,9 @@ const Hotels = ({ cityCode, checkInDate, checkOutDate }) => {
                     </div>
                     <div className={classes.hotelDetails}>
                       <Typography className={classes.hotelName}>
-                        {name}
+                        {name} <span role="img" aria-label="hotel">🏩</span>
                         {hotel.price
-                          ? ` - ${hotel.price} ${hotel.currency}`
+                          ? ` - ${hotel.price} ${hotel.currency} 💸`
                           : " - Price not available"}
                       </Typography>
                       <Typography

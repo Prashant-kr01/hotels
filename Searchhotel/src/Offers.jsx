@@ -12,7 +12,34 @@ import { makeStyles } from "@mui/styles";
 import { LocalOffer as TagIcon } from "@mui/icons-material";
 import { getOffers } from "./api";
 const useStyles = makeStyles((theme) => ({
-  // ...
+  offerList: {
+    background: "#e0f7fa",
+    borderRadius: 12,
+    marginTop: 8,
+    padding: 8,
+  },
+  offerListing: {
+    background: "#fff",
+    borderRadius: 8,
+    marginBottom: 8,
+    boxShadow: "0 1px 4px rgba(33, 150, 243, 0.10)",
+  },
+  offerIcon: {
+    color: "#ff9800",
+  },
+  offerTextWrapper: {
+    marginLeft: 8,
+  },
+  offerText: {
+    fontSize: 15,
+    color: "#00796b",
+  },
+  offerLoadingContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: 60,
+  },
 }));
 const Offers = ({ active, hotelId, setOfferId }) => {
   if (!hotelId) {
@@ -85,7 +112,7 @@ const Offers = ({ active, hotelId, setOfferId }) => {
             />
             <div>
               <Button color="primary" variant="contained">
-                {offer.price.total} {offer.price.currency}
+                {offer.price.total} {offer.price.currency} <span role="img" aria-label="money">💰</span>
               </Button>
             </div>
           </ListItem>

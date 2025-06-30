@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { TextField, Autocomplete, CircularProgress } from "@mui/material";
+import { TextField, Autocomplete, CircularProgress, InputAdornment } from "@mui/material";
+import { LocationOn } from "@mui/icons-material";
 import { searchCities } from "./api";
 
 const Search = ({ setCityCode }) => {
@@ -54,10 +55,15 @@ const Search = ({ setCityCode }) => {
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Select a city"
+          label="Select a city 🌆"
           fullWidth
           InputProps={{
             ...params.InputProps,
+            startAdornment: (
+              <InputAdornment position="start">
+                <LocationOn style={{ color: '#ff9800' }} />
+              </InputAdornment>
+            ),
             endAdornment: (
               <>
                 {loading ? <CircularProgress color="inherit" size={20} /> : null}
