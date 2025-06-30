@@ -1,4 +1,4 @@
-const { API_KEY, API_SECRET } = require("./config");
+const { API_KEY, API_SECRET } = require("./config.js");
 const Amadeus = require("amadeus");
 const express = require("express");
 
