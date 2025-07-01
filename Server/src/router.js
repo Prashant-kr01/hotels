@@ -52,36 +52,38 @@ router.get(`/${API}/hotels`, async (req, res) => {
       // Return all hotels (even if no offers)
       return res.json(hotelsList);
     }
-    // Step 2: Get hotel offers for those hotel IDs
-    const params = {
-      hotelIds: hotelIds.join(','),
-      checkInDate,
-      checkOutDate
-    };
-    const response = await amadeus.shopping.hotelOffersSearch.get(params);
-    const offersData = JSON.parse(response.body);
-    // Merge offers into hotelsList, and attach image/price if available
-    const hotelsWithOffers = hotelsList.map(hotel => {
-      const hotelOffers = (offersData.data || []).filter(offer => offer.hotel && offer.hotel.hotelId === hotel.hotelId);
-      // Try to get image from offer or hotel.media
-      let image = hotel.media && hotel.media[0] ? hotel.media[0].uri : null;
-      if (!image && hotelOffers.length > 0 && hotelOffers[0].hotel && hotelOffers[0].hotel.media && hotelOffers[0].hotel.media[0]) {
-        image = hotelOffers[0].hotel.media[0].uri;
-      }
-      // Try to get price from first offer
+    // Step 2: For each hotel, fetch its price and attach to hotel object
+    const hotelsWithPrice = await Promise.all(hotelsList.map(async hotel => {
       let price = null;
       let currency = null;
-      if (hotelOffers.length > 0 && hotelOffers[0].price) {
-        price = hotelOffers[0].price.total;
-        currency = hotelOffers[0].price.currency;
+      try {
+        if (!amadeus.shopping || !amadeus.shopping.hotelOffers || !amadeus.shopping.hotelOffers.get) {
+          console.error('Amadeus hotelOffers.get is not available');
+          return { ...hotel, price, currency };
+        }
+        const response = await amadeus.shopping.hotelOffers.get({ hotelId: hotel.hotelId, checkInDate, checkOutDate });
+        const data = JSON.parse(response.body);
+        // Find the first offer with a price
+        if (Array.isArray(data.data) && data.data.length > 0 && data.data[0].offers && data.data[0].offers.length > 0 && data.data[0].offers[0].price) {
+          price = data.data[0].offers[0].price.total;
+          currency = data.data[0].offers[0].price.currency;
+        }
+        // Defensive: never set a fallback or hardcoded price
+        if (!price || !currency) {
+          price = null;
+          currency = null;
+        }
+        // Remove 500 INR if present
+       
+        
+      } catch (e) {
+        console.error('Error fetching offers for hotelId', hotel.hotelId, e);
+        price = null;
+        currency = null;
       }
-      if (!price) {
-        price = "500";
-        currency = "INR";
-      }
-      return { ...hotel, offers: hotelOffers, image, price, currency };
-    });
-    res.json(hotelsWithOffers);
+      return { ...hotel, price, currency };
+    }));
+    res.json(hotelsWithPrice);
   } catch (err) {
     console.error("/api/hotels error:", err);
     res.status(500).json({ error: err.message || err });

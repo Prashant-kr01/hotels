@@ -6,14 +6,20 @@ import {
   CircularProgress,
   Typography,
   Button,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Divider,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import {
   Apartment as HotelIcon,
   ExpandMore as ExpandIcon,
+  LocalOffer as TagIcon,
 } from "@mui/icons-material";
 import { getHotels } from "./api";
-import Offers from "./Offers";
+
 const useStyles = makeStyles((theme) => ({
   hotelList: {
     marginTop: 24,
@@ -57,7 +63,8 @@ const useStyles = makeStyles((theme) => ({
     color: "#757575",
   },
 }));
-const Hotels = ({ cityCode, checkInDate, checkOutDate }) => {
+
+const Hotels = ({ cityCode, checkInDate, checkOutDate, numPersons }) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [activeHotelId, setActiveHotelId] = useState(false);
@@ -72,7 +79,8 @@ const Hotels = ({ cityCode, checkInDate, checkOutDate }) => {
       getHotels(
         cityCode,
         checkInDate.format("YYYY-MM-DD"),
-        checkOutDate.format("YYYY-MM-DD")
+        checkOutDate.format("YYYY-MM-DD"),
+        numPersons // Pass to API if needed
       )
         .then((hotels) => {
           setHotels(hotels);
@@ -85,7 +93,7 @@ const Hotels = ({ cityCode, checkInDate, checkOutDate }) => {
     } else if (!submitted) {
       setHotels(null);
     }
-  }, [submitted, cityCode, checkInDate, checkOutDate]);
+  }, [submitted, cityCode, checkInDate, checkOutDate, numPersons]);
   const handleSubmit = () => {
     setSubmitted(true);
   };
@@ -133,9 +141,15 @@ const Hotels = ({ cityCode, checkInDate, checkOutDate }) => {
                     <div className={classes.hotelDetails}>
                       <Typography className={classes.hotelName}>
                         {name} <span role="img" aria-label="hotel">🏩</span>
-                        {hotel.price
-                          ? ` - ${hotel.price} ${hotel.currency} 💸`
-                          : " - Price not available"}
+                      </Typography>
+                      <Typography style={{ fontWeight: 600, color: '#00796b', fontSize: 16, marginTop: 4 }}>
+                        {hotel.price && hotel.currency ? (
+                          <>
+                            {hotel.price} {hotel.currency} <span role="img" aria-label="money">💰</span>
+                          </>
+                        ) : (
+                          <>Price not available <span role="img" aria-label="money">💰</span></>
+                        )}
                       </Typography>
                       <Typography
                         color="textSecondary"
@@ -156,8 +170,33 @@ const Hotels = ({ cityCode, checkInDate, checkOutDate }) => {
                   </div>
                 </AccordionSummary>
                 <AccordionDetails>
-                  {hotelId ? (
-                    <Offers active={active} hotelId={hotelId} />
+                  {hotel.offers && hotel.offers.length > 0 ? (
+                    <List style={{ width: '100%', background: '#e0f7fa', borderRadius: 12, marginTop: 8, padding: 8 }}>
+                      <Divider />
+                      {hotel.offers.map((offer, idx) => (
+                        <ListItem
+                          alignItems="flex-start"
+                          divider={idx !== hotel.offers.length - 1}
+                          style={{ background: '#fff', borderRadius: 8, marginBottom: 8, boxShadow: '0 1px 4px rgba(33, 150, 243, 0.10)' }}
+                          key={offer.id || idx}
+                        >
+                          <ListItemIcon style={{ color: '#ff9800' }}>
+                            <TagIcon />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={<span style={{ fontSize: 15, color: '#00796b' }}>{offer.room?.description?.text || 'No description'}</span>}
+                            secondary={
+                              <>
+                                <span style={{ fontWeight: 600, color: '#00796b' }}>
+                                  {offer.price?.total ? `${offer.price.total} ${offer.price.currency} ` : 'Price not available'}
+                                  <span role="img" aria-label="money">💰</span>
+                                </span>
+                              </>
+                            }
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
                   ) : (
                     <span>No offers available</span>
                   )}
@@ -169,4 +208,5 @@ const Hotels = ({ cityCode, checkInDate, checkOutDate }) => {
     </div>
   );
 };
-export default Hotels ;
+
+export default Hotels;

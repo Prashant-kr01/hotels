@@ -31,13 +31,14 @@ const App = () => {
   const [cityCode, setCityCode] = useState(null);
   const [checkInDate, setCheckInDate] = useState(dayjs());
   const [checkOutDate, setCheckOutDate] = useState(dayjs().add(1, "day"));
+  const [numPersons, setNumPersons] = useState(1);
 
   return (
     <Container maxWidth="sm" className={classes.container}>
       <Typography className={classes.title}>
         🏨 Hotel Booking App <span role="img" aria-label="sparkles">✨</span>
       </Typography>
-      <Search setCityCode={setCityCode} />
+      <Search setCityCode={setCityCode} setNumPersons={setNumPersons} />
       <DateFilters
         checkInDate={checkInDate}
         checkOutDate={checkOutDate}
@@ -48,6 +49,7 @@ const App = () => {
         cityCode={cityCode}
         checkInDate={checkInDate}
         checkOutDate={checkOutDate}
+        numPersons={numPersons}
       />
     </Container>
   );
