@@ -116,7 +116,7 @@ const Hotels = ({ cityCode, checkInDate, checkOutDate, numPersons }) => {
       <div className={classes.hotelList}>
         {hotels &&
           hotels.map((hotel) => {
-            const { name, address, hotelId, media } = hotel;
+            const { name, address, hotelId, media, rating } = hotel;
             const image = media ? media[0].uri : "";
             const active = activeHotelId === hotelId;
             return (
@@ -142,6 +142,16 @@ const Hotels = ({ cityCode, checkInDate, checkOutDate, numPersons }) => {
                       <Typography className={classes.hotelName}>
                         {name} <span role="img" aria-label="hotel">🏩</span>
                       </Typography>
+                      {hotel.sentiments && (
+                        <div style={{ margin: '4px 0 8px 0', fontSize: 13, color: '#333' }}>
+                          <b>Sentiments:</b>
+                          {Object.entries(hotel.sentiments).map(([key, value]) => (
+                            <span key={key} style={{ marginLeft: 8 }}>
+                              {key}: <span style={{ color: '#1976d2' }}>{value}</span>
+                            </span>
+                          ))}
+                        </div>
+                      )}
                       <Typography style={{ fontWeight: 600, color: '#00796b', fontSize: 16, marginTop: 4 }}>
                         {hotel.price && hotel.currency ? (
                           <>
@@ -166,6 +176,29 @@ const Hotels = ({ cityCode, checkInDate, checkOutDate, numPersons }) => {
                           {address ? ` ${address.postalCode}` : ""}
                         </span>
                       </Typography>
+                      {/* Always show review section below address */}
+                      <div style={{ margin: '6px 0 0 0', fontSize: 15 }}>
+                        {rating && (
+                          <span style={{ color: '#FFD700', marginRight: 12 }}>
+                            ⭐ {rating}
+                          </span>
+                        )}
+                        {hotel.overallRating && (
+                          <span style={{ color: '#4caf50', marginRight: 12 }}>
+                            Review Score: {(hotel.overallRating / 10).toFixed(1)}/10
+                          </span>
+                        )}
+                        {hotel.numberOfReviews && (
+                          <span style={{ color: '#607d8b' }}>
+                            ({hotel.numberOfReviews} reviews)
+                          </span>
+                        )}
+                        {!rating && !hotel.overallRating && !hotel.numberOfReviews && (
+                          <span style={{ color: '#bdbdbd' }}>
+                            No reviews or ratings available
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </AccordionSummary>
